@@ -1,9 +1,16 @@
+"""
+Only has financial statements data, no machine learning or stock data.
+"""
+
 import pandas as pd
 import numpy as np
 from pathlib import Path
 import requests
 from zipfile import ZipFile
 from io import BytesIO
+
+
+
 
 data_path = Path('data')
 
