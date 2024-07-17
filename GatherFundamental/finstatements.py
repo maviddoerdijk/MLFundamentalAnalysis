@@ -77,5 +77,3 @@ pe = aapl_stock.AdjClose.to_frame('price').join(eps.to_frame('eps'))
 pe = pe.fillna(method='ffill').dropna()
 pe['P/E Ratio'] = pe.price.div(pe.eps)
 axes = pe.plot(subplots=True, figsize=(16,8), legend=False, lw=2)                                             
-                                            
-                                               
