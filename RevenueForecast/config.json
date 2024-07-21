@@ -1,0 +1,14 @@
+{
+    "data_path": "data/nn_data.pkl",
+    "classification": {
+      "model_params": {
+        "hidden_layer_sizes": [150, 100, 50],
+        "max_iter": 300,
+        "activation": "relu",
+        "solver": "adam",
+        "random_state": 0
+      }
+    },
+    "regression": {}
+  }
+  
