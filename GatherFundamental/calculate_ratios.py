@@ -1,7 +1,7 @@
 import yfinance as yf
 import numpy as np
 
-def get_fundamental_df(ticker='MSFT', wanted_metrics=[]):
+def get_fundamentals_dict(ticker='MSFT', wanted_metrics=[]) -> dict:
     """
     Calculate various metrics from a given ticker using yfinance to get the fundamental data.
 
@@ -17,7 +17,7 @@ def get_fundamental_df(ticker='MSFT', wanted_metrics=[]):
     dict: A dictionary containing the calculated metrics.
 
     Example:
-    >>> metrics = get_fundamental_df('AAPL', ['PE Ratio', 'Debt to Equity'])
+    >>> metrics = get_fundamentals_dict('AAPL', ['PE Ratio', 'Debt to Equity'])
     >>> print(metrics)
     {'PE Ratio': 28.5, 'Debt to Equity': 1.5}
     """
@@ -27,7 +27,8 @@ def get_fundamental_df(ticker='MSFT', wanted_metrics=[]):
         "SIGMA", "RSIZE", "MB", "PRICE", "LPFD", "PFD", "EBIT", "TEV", "8yr_ROA", "P_8yr_ROA", 
         "8yr_ROC", "P_8yr_ROC", "FCFA", "P_CFOA", "MG", "P_MG", "MS", "P_MS", "MM", "P_FP", "ROA",
         "FS_ROA", "FCFTA", "FS_FCFTA", "ACCRUAL", "FS_ACCRUAL", "LEVER", "FS_LEVER", "LIQUID", 
-        "FS_LIQUID", "NEQISS", "FS_NEQISS", "FS_MARGIN", "FS_TURN", "P_FS", "QUALITY"
+        "FS_LIQUID", "NEQISS", "FS_NEQISS", "FS_MARGIN", "FS_TURN", "P_FS", "QUALITY", "PE Ratio",
+        "Cash Ratio", "Quick Ratio", "Market Cap"
     ]
 
     invalid_metrics = [wanted for wanted in wanted_metrics if wanted not in possible_metrics_and_variables]
@@ -246,7 +247,26 @@ def get_fundamental_df(ticker='MSFT', wanted_metrics=[]):
         elif metric == "QUALITY":
             # Not implemented
             metrics["QUALITY"] = np.nan
+        elif metric == "PE Ratio":
+            market_cap = info.get("marketCap", np.nan)
+            net_income = fetch_financial_data("Net Income", financials)
+            metrics["PE Ratio"] = market_cap / net_income if net_income != 0 else np.nan
+        elif metric == "Cash Ratio":
+            cash_and_equivalents = fetch_financial_data("Cash And Cash Equivalents", balance_sheet)
+            total_current_liabilities = fetch_financial_data("Current Liabilities", balance_sheet)
+            metrics["Cash Ratio"] = cash_and_equivalents / total_current_liabilities if total_current_liabilities != 0 else np.nan
+        elif metric == "Quick Ratio":
+            cash_and_equivalents = fetch_financial_data("Current Assets", balance_sheet)
+            inventory = fetch_financial_data("Inventory", balance_sheet)
+            current_liabilities = fetch_financial_data("Current Liabilities", balance_sheet)
+            metrics["Quick Ratio"] = (cash_and_equivalents - inventory) / current_liabilities if current_liabilities != 0 else np.nan
+        elif metric == "Market Cap":
+            metrics["Market Cap"] = info.get("marketCap", np.nan)
         else:
             metrics[metric] = np.nan
 
     return metrics
+
+if __name__ == "__main__":
+    metrics = get_fundamentals_dict("AAPL", ["PE Ratio", "Cash Ratio", "Quick Ratio", "Market Cap"])
+    print(metrics)

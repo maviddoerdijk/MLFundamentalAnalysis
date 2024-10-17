@@ -14,15 +14,6 @@ import matplotlib.pyplot as plt
 pd.options.display.float_format = "{:.4%}".format
 warnings.filterwarnings("ignore")
 
-mag_7 = [
-    "AMZN",
-    "AAPL",
-    "NVDA",
-    "META",
-    "TSLA",
-    "MSFT",
-    "GOOG",
-]
 berkshire_tickers = [
     "AAPL",    # Apple Inc.
     "BAC",     # Bank of America Corp.
